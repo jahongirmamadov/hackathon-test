@@ -60,7 +60,7 @@
        <span id="logo">TeamCircus</span>
         <nav>
           <a href="#" onclick="return show('Page1','Page2');">Home</a>
-          <a class="dropbtn" href="#" onclick="return show('Page2','Page1');">Login </a>
+          <a href="#" onclick="return show('Page2','Page1');">Login </a>
         </nav>
       </header>
     </span>
@@ -150,36 +150,35 @@
     </div>
 
     <div align="center" class="container">
-    <div id="Page2" class="main" >
+        <div id="Page2" class="main" >
         <br/><br/><br/><br/><br/>
-
-
-          <h2>Javascript Login Form Validation</h2>
-          <form >
-          <label>User Name :</label>
-          <input type="text" name="username"/>
-          <label>Password :</label>
-          <input type="password" name="password"/>
-          <button  onclick="return show('page3','Page2');" > Submit</button>
-
+          <form id="tcNoForm">
+              <label>TC Kimlik No :</label>
+              <input type="text" name="tcNo"/>
+              <input type="button" name="answer" value="Sorgula" onclick="showDiv()" />
           </form>
-          <span><b class="note">Note : </b>For this demo use following username and password. <br/><b class="valid">User Name : Formget<br/>Password : formget#123</b></span>
-          </div>
-          </div>
+      </div>
+  </div>
 
+    <div id="tcNoDiv" class="container" align="center" style="display: none;">
+        <h1>Müşteri Detayları</h1>
+        <div id="tcNoText"></div>
+        <div id="paketlerDiv">
+            <h1>Alınabilecek Paketler</h1>
+            <input type="button" name="answer" value="paketA" onclick="showPackages()" />
+        </div>
 
+    </div>
 
-          <div align="center" id="page3" style="color: orange">
-            <h1>Hello</h1>
-
-
-            </div>
+    <div id="taksitlerDiv" class="container" align="center" style="display: none;padding-top: 400px;">
+        <h1>Taksit Seçenekleri</h1>
+        <div id="taksitlerText"></div>
+    </div>
 
 
 
     <script src="js/home.js"></script>
     <script>
-
     //scroll to top on refresh//
 window.onbeforeunload = function() {
   window.scrollTo(0, 0);
@@ -886,14 +885,41 @@ jQuery(document).ready(function($) {
               }
           }
       }
+      const paketler = [taksit1, taksit2, taksit3, taksit4];
 
+      function showDiv() {
+        document.getElementById('tcNoDiv').style.display = "block";
+        for(let key in musteri.response.return.dtoList.identityDetails) {
+          if(musteri.response.return.dtoList.identityDetails.hasOwnProperty(key)) {
+            document.getElementById('tcNoText').innerHTML += "<strong>" + key + "</strong>" + ": " + musteri.response.return.dtoList.identityDetails[key] + "<br>"
+          }
+        }
+        document.getElementById('tcNoForm').style.display = "none";
+      }
 
+      function showPackages() {
+        document.getElementById('paketlerDiv').style.display = "none";
+        document.getElementById('taksitlerDiv').style.display = "block";
+        let counter = 1;
+        for(let paket of paketler) {
+          let paketAdi = "paket" + counter;
+          let title = document.createElement('h1');
+          title.innerHTML = paketAdi;
+          counter += 1;
+          document.getElementById('taksitlerText').appendChild(title)
+          for(let key in paket.response.return) {
+            if(paket.response.return.hasOwnProperty(key)) {
+              if(key !== "installmentList" && key !== "crdApiCommissionDTOList") {
+                document.getElementById('taksitlerText').innerHTML += "<strong>" + key + "</strong>" + ": " + paket.response.return[key] + "<br>"
+              } else if(key === "installmentList") {
+                // taksitlerin ayrintilari
+              }
+            }
+          }
+        }
+      }
 
     </script>
-
-
-
-
   </body>
 
   </html>
